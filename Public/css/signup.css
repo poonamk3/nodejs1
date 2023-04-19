@@ -1,0 +1,106 @@
+form#auth-form {
+    /* height: 445px; */
+    position: absolute;
+    top: 15%;
+    left: 30%;
+    /* right: 50%; */
+    /* bottom: 50%; */
+    width: 520px;
+    background: #323232;
+    /* margin: 100px auto; */
+    border-radius: 20px;
+}
+
+form#auth-form h1 {
+    color: #fff;
+    font-family: arial, sans-sarif;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid black;
+}
+
+p {
+    margin: 0;
+}
+
+.password-group {
+    position: relative;
+}
+
+.eye-button {
+    position: absolute;
+    height: 19px;
+    top: 28px;
+    right: 24px;
+}
+
+.pass-eye-slash {
+    display: none;
+}
+
+.con-pass-eye-slash {
+    display: none;
+}
+
+input.txt {
+    height: 41px;
+    width: 433px;
+    margin-left: 30px;
+    margin-top: 14px;
+    margin-bottom: 2px;
+    border-radius: 20px;
+    padding-left: 42px;
+    border-bottom: 2px #7f7f7f;
+}
+
+.error-message {
+    color: red;
+    margin-left: 45px;
+    display: none;
+}
+
+input.c {
+    /* background: url("../img/p.gif") no-repeat 10px 10px, linear-gradient(#b1b1b1, #e4e4e4); */
+    background: url("/Assets/Images/user.svg") no-repeat 13px 11px, linear-gradient(#b1b1b1, #e4e4e4);
+    background-size: 18px;
+}
+
+input.n {
+    /* background: url("../img/c.gif") no-repeat 10px, 10px, linear-gradient(#b1b1b1, #e4e4e4); */
+    background: url("/Assets/Images/mobile.svg") no-repeat 13px 11px, linear-gradient(#b1b1b1, #e4e4e4);
+    background-size: 18px;
+}
+
+input.e {
+    /* background: url("../img/m.gif") no-repeat 10px, 10px, linear-gradient(#b1b1b1, #e4e4e4); */
+    background: url("/Assets/Images/mail.svg") no-repeat 13px 11px, linear-gradient(#b1b1b1, #e4e4e4);
+    background-size: 18px;
+}
+
+input.p {
+    /* background: url("../img/p.gif") no-repeat 10px, 10px, linear-gradient(#b1b1b1, #e4e4e4); */
+    background: url("/Assets/Images/password.svg") no-repeat 13px 11px, linear-gradient(#b1b1b1, #e4e4e4);
+    background-size: 18px;
+}
+
+.ch {
+    margin-left: 30px;
+    margin-top: 14px;
+}
+
+.se {
+    color: #717c00;
+    text-decoration: underline;
+}
+
+.submit {
+    margin-left: 230px;
+    margin-bottom: 20px;
+    margin-top: 14px;
+    height: 49px;
+    width: 249px;
+    color: fff;
+    border-radius: 20px;
+    background: linear-gradient(#969419, #717c00);
+}

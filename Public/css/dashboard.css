@@ -1,0 +1,21 @@
+div#events {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 20px;
+}
+
+.main-container {
+    display: flex;
+    margin: 20px 40px;
+    justify-content: space-evenly;
+}
+
+.holiday-list {
+    margin: 0 20px;
+}
+
+.card-container {
+    /* width: 50%; */
+    /* padding: 20px; */
+}

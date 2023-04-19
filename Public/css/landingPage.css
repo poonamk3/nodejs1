@@ -1,0 +1,66 @@
+.banner-container {
+    display: flex;
+    min-height: 75vh;
+    background-image: linear-gradient(#28324a14, #28324a14), url(/Assets/Images/banner.jpg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.banner-container div {
+    width: 42%;
+    align-self: center;
+    margin: 0 7%;
+}
+
+.banner-container h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #28324a;
+}
+
+.banner-container p {
+    color: #5a5c60;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+.banner-container div :first-child {
+    font-size: inherit;
+    line-height: inherit;
+}
+div.btn-container{
+    width: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    justify-content: space-evenly;
+}
+.banner-container .btn-container button {
+    width: 50%;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    font-weight: bold;
+    padding: 14px 24px;
+}
+
+.btn-signup{
+    background-color: #457a7b;
+    color: white;
+    border: 0;
+}
+
+.banner-container .btn-signup:hover {
+    background-color: #284748;
+}
+
+.btn-signin{
+    background-color: #fff;
+    color: #457a7b;
+    border: 2px solid #457a7b;
+}
+
+.banner-container .btn-signin:hover {
+    background-color: #ededed;
+    color: #284748;
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/signup.css">
+</head>
+
+<body>
+  <form id="auth-form">
+    <h1>Create an Account</h1>
+    <input name="name" class="txt c" type="text" placeholder="Fullname">
+    <p class="error-message name">Please enter name</p>
+
+    <input name="mobileNumber" class="txt n" type="number" placeholder="Mobile No">
+    <p class="error-message mobileNumber">Please enter mobile number</p>
+
+    <div>
+      <input name="email" class="txt e" type="email" placeholder="Email Id" onblur="checkUniqueEmail(event)">
+      <p class="error-message email">Please enter email</p>
+      <p class="error-message inValidEmail">Please enter a valid email</p>
+    </div>
+
+    <div class="password-group">
+      <input name="password" class="txt p inp-pass" type="password" placeholder="Password">
+      <img class="eye-button pass-eye" src="/Assets/Images/eye-solid.svg"
+        onclick="toggleEye('pass-eye-slash', 'pass-eye', 'inp-pass')" />
+      <img class="eye-button pass-eye-slash" src="/Assets/Images/eye-slash-solid.svg"
+        onclick="toggleEye('pass-eye', 'pass-eye-slash', 'inp-pass')" />
+      <p class="error-message password">Please enter password</p>
+      <p class="error-message inValidPassword">Password must be 8 to 16 characters long alpha numberic uppercase
+        lowercase and a special character</p>
+    </div>
+
+    <div class="password-group">
+      <input name="confirmPassword" class="txt p inp-con-pass" type="password" placeholder="Confirm Password">
+      <img class="eye-button con-pass-eye" src="/Assets/Images/eye-solid.svg"
+        onclick="toggleEye('con-pass-eye-slash', 'con-pass-eye', 'inp-con-pass')" />
+      <img class="eye-button con-pass-eye-slash" src="/Assets/Images/eye-slash-solid.svg"
+        onclick="toggleEye('con-pass-eye', 'con-pass-eye-slash', 'inp-con-pass')" />
+      <p class="error-message confirmPassword">Please confirm password </p>
+      <p class="error-message inValidConfirmPassword">Password and confirm password dosen't match</p>
+    </div>
+
+    <input class="ch" name="agree" type="checkbox">
+    <span class="formfield-agree" style="color:white;">I agree to the <span class="se">Terms and Conditions</span>
+      and<span class="se"> privacy policy</span></span>
+    <p class="error-message agree">Please accept terms and conditions </p>
+    <br>
+
+    <input type="submit" class="submit" value="Create account">
+
+  </form>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js">
+    var $ = require("jquery");
+  </script>
+
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11">
+    const Swal = require('sweetalert2')
+  </script>
+
+  <script type="text/javascript" src="/javascript/utils/validation.js"></script>
+
+  <script>
+
+    const checkUniqueEmail = (event) => {
+      try {
+        const email = event.target.value
+        $('.inValidEmail').hide()
+        $('.email-already-exist').remove()
+        if (email && !checkEmail(email)) $('.inValidEmail').show()
+        else if (email) {
+          $.ajax({
+            url: `/api/checkuser?email=${email}`,
+            success: (result, status, response) => { },
+            error: (response, status, error) => {
+              if (response.status === 400) {
+                const targetDiv = event.target.parentElement
+                $(targetDiv).append("<p class='error-message email-already-exist'>Email already exist</p>")
+                $('.email-already-exist').show()
+              }
+            }
+          })
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    $('#auth-form').on('submit', (event) => {
+      event.preventDefault()
+      if ($('.email-already-exist').length) return
+      // // const valuesArray = $("#auth-form").serializeArray()
+      const values = $("#auth-form").serializeArray().reduce((acc, item) => ({ ...acc, [item.name]: item.value }), {})
+      $(".error-message").hide()
+      const errors = checkValidation(values)
+      if (!values.agree) errors.push('agree')
+      for (let name of errors) $(`.${name}`).show()
+      if (errors.length) return
+      try {
+        $.ajax({
+          type: "post",
+          url: "/api/auth/signup",
+          data: values,
+          success: function (result, status, xhr) {
+            Swal.fire({
+              title: 'Success!',
+              text: 'Account created Successfully',
+              icon: 'success',
+            })
+            window.location.href = '/signin'
+          },
+          error: (xhr, status, error) => {
+            Swal.fire({
+              title: 'Error!',
+              text: `${xhr?.responseJSON?.error || "Went somthing wrong"}`,
+              icon: 'error',
+            })
+            console.log(xhr?.responseJSON?.error)
+          }
+        });
+      } catch (err) {
+        console.log(err)
+      }
+    })
+
+  </script>
+
+  <!-- <script type="text/javascript" src="/javascript/signup.ts"></script> -->
+
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Bootstrap links -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+    integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+    crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+  <%- include('../../partials/header') %>
+    <h1>Dashboard</h1>
+    <div class="main-container">
+
+      <div id="events"> </div>
+
+      <div class="holiday-list">
+        <ul class="list-group">
+          <% holidays.forEach((holiday)=>{ %>
+            <li class="list-group-item d-flex align-items-center list-group-item-success">
+              <p>
+                <%= holiday['emoji'] %>
+              </p>
+              <p>
+                <span>
+                  <%= holiday['date'].toLocaleDateString('en-us', { day:"numeric", month:"long", weekday:"long"}) %>
+                </span>
+                <br/>
+                <span class="text-danger">
+                  <%= holiday['name'] %>
+                </span>
+              </p>
+            </li>
+            <% }) %>
+        </ul>
+
+      </div>
+    </div>
+    <%- include('../../partials/footer') %>
+
+</body>
+<script type="text/javascript" src="/javascript/utils/utils.js"></script>
+
+<script>
+  if (!isAuth()) window.location.href = '/signin'
+</script>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js">
+  var $ = require("jquery");
+</script>
+<script type="text/javascript" src="/javascript/utils/browserStorage.js"></script>
+
+<script>
+
+  const addCarousel = (images, eventId) => {
+    const $imageCarousel = $("<div>", { "id": `Event-${eventId}`, "class": "carousel slide", "data-bs-ride": `carousel-${eventId}` });
+    const $carouselIndicators = $("<div>", { "class": "carousel-indicators" });
+    const $carouselImages = $("<div>", { "class": "carousel-inner" });
+
+    images.forEach((item, index) => {
+      const $indButton = $("<button>", {
+        "type": "button",
+        "data-bs-target": `#Event-${eventId}`,
+        "data-bs-slide-to": `${index}`,
+        "class": `${index ? "" : "active"}`,
+        "aria-current": `${index ? "" : "true"}`,
+        "aria-label": `Slide ${index}`
+      });
+      const $imgDiv = $("<div>", { "class": `carousel-item ${index ? "" : "active"}`, "data-bs-interval": "1000" });
+      const $image = $("<img>", {
+        "src": item,
+        "class": "d-block w-100"
+      });
+      $imgDiv.append($image)
+      $carouselIndicators.append($indButton)
+      $carouselImages.append($imgDiv)
+    });
+
+    // Left Arrow Button
+    const $leftArrowButton = $("<button>", {
+      "class": "carousel-control-prev",
+      "type": "button",
+      "data-bs-target": `#Event-${eventId}`,
+      "data-bs-slide": "prev",
+    });
+    const $leftSpan1 = $("<span>", { "class": "carousel-control-prev-icon", "aria-hidden": "true" });
+    const $leftSpan2 = $("<span>", { "class": "visually-hidden" });
+    $leftSpan2.append("Previous")
+    $leftArrowButton.append($leftSpan1)
+    $leftArrowButton.append($leftSpan2)
+
+    // Right Arrow Button
+    const $rightArrowButton = $("<button>", {
+      "class": "carousel-control-next",
+      "type": "button",
+      "data-bs-target": `#Event-${eventId}`,
+      "data-bs-slide": "next",
+    });
+    const $rightSpan1 = $("<span>", { "class": "carousel-control-next-icon", "aria-hidden": "true" });
+    const $rightSpan2 = $("<span>", { "class": "visually-hidden" });
+    $rightSpan2.append("Next")
+
+    $rightArrowButton.append($rightSpan1)
+    $rightArrowButton.append($rightSpan2)
+
+
+    $imageCarousel.append($carouselIndicators)
+    $imageCarousel.append($carouselImages)
+    $imageCarousel.append($leftArrowButton)
+    $imageCarousel.append($rightArrowButton)
+    return $imageCarousel
+  }
+
+
+  const addList = (data) => {
+    const $eventList = $("<div>", { "class": "card-container" });
+
+    data.forEach(item => {
+      const $listItem = $("<div>", { "id": item?._id, "class": "card" });
+      const $image = $("<img>", {
+        "src": item?.images[0],
+        "class": "card-img-top"
+      });
+
+      const $heading = $("<h5>", { "class": "card-title" });
+      $heading.append(item?.eventName)
+      const $description = $("<p>", { "class": "card-text" });
+      $description.append(item?.description)
+      const $cardBody = $("<div>", { "class": "card-body" });
+      $cardBody.append($heading)
+      $cardBody.append($description)
+
+      $listItem.append(addCarousel(item?.images, item?._id))
+      $listItem.append($cardBody)
+      $eventList.append($listItem)
+    });
+    $("#events").append($eventList);
+  }
+
+
+  const getEvents = () => {
+    try {
+      const token = getItemLocalStorage('authToken')
+
+      $.ajax({
+        type: 'get',
+        url: "/api/Events/",
+        headers: { "Authorization": `Bearer ${token}` },
+        success: (result, status, response) => {
+          addList(result?.data)
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  getEvents()
+</script>
+
+</html>

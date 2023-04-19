@@ -1,0 +1,22 @@
+body {
+    margin: 0px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    /* position: fixed;
+    top: 0;
+    left: 0;
+    right: 0; */
+    padding: 10px;
+    height: 30px;
+    background: #fff;
+    box-shadow: 0 0 10px 0 #b3b3b3;
+}
+
+.header-container p {
+    margin: 0px 20px;
+}

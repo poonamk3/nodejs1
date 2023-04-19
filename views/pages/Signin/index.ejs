@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/signup.css">
+</head>
+
+<body>
+  <form id="auth-form">
+    <h1>Sign In</h1>
+    <input name="email" class="txt e" type="email" placeholder="Email Id">
+    <p class="error-message email">Please enter email</p>
+    <p class="error-message inValidEmail">Please enter a valid email</p>
+
+    <div class="password-group">
+      <input name="password" class="txt p inp-pass" type="password" placeholder="Password">
+      <img class="eye-button pass-eye" src="/Assets/Images/eye-solid.svg"
+        onclick="toggleEye('pass-eye-slash', 'pass-eye', 'inp-pass')" />
+      <img class="eye-button pass-eye-slash" src="/Assets/Images/eye-slash-solid.svg"
+        onclick="toggleEye('pass-eye', 'pass-eye-slash', 'inp-pass')" />
+      <p class="error-message password">Please enter password</p>
+    </div>
+
+    <br>
+    <input name="submit" type="submit" class="submit" value="Sign In">
+  </form>
+</body>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js">
+  var $ = require("jquery");
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11">
+  const Swal = require('sweetalert2')
+</script>
+
+<script type="text/javascript" src="/javascript/utils/validation.js"></script>
+<script type="text/javascript" src="/javascript/utils/browserStorage.js"></script>
+
+<script>
+
+  $('#auth-form').on('submit', (event) => {
+    event.preventDefault()
+    $(".error-message").hide()
+    const values = $("#auth-form").serializeArray().reduce((acc, item) => ({ ...acc, [item.name]: item.value }), {})
+    const errors = checkValidation(values).filter(item => item !== "inValidPassword")
+    for (let name of errors) $(`.${name}`).show()
+    if(errors.length) return
+    try {
+      $.ajax({
+        type: "post",
+        url: "/api/auth/signin",
+        data: values,
+        success: function (result, status, xhr) {
+          Swal.fire({
+            title: 'Success!',
+            text: 'Login Successfully',
+            icon: 'success',
+          })
+          setItemLocalStorage("authToken", result?.data?.token)
+          setItemLocalStorage("userData", result?.data)
+          window.location.href = "/dashboard"
+        },
+        error: (xhr, status, error) => {
+          Swal.fire({
+            title: 'Error!',
+            text: `${xhr?.responseJSON?.error || "Went somthing wrong"}`,
+            icon: 'error',
+          })
+          console.log(xhr?.responseJSON?.error)
+        }
+      });
+    } catch (err) {
+      console.log(err)
+    }
+  })
+</script>
+
+</html>

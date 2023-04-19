@@ -1,0 +1,145 @@
+<head>
+    <!-- Bootstrap links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+        integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+        crossorigin="anonymous"></script>
+
+    <!-- Local css link -->
+    <link rel="stylesheet" href="/css/signup.css">
+</head>
+
+
+<div class="container">
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog" data-backdrop="false">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Event</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <div>
+                            <input type="text" name="eventName" />
+                            <p class="error-message eventName">Please enter eventName</p>
+                        </div>
+                        <div>
+                            <input type="date" name="eventDate" />
+                            <p class="error-message eventDate">Please enter eventDate</p>
+                        </div>
+                        <div>
+                            <textarea type="text" rows="4" name="description"> </textarea>
+                        </div>
+                        <div>
+                            <select name="eventType">
+                                <option value="birthday">birthday</option>
+                                <option value="anniversery">anniversery</option>
+                                <option value="festival">festival</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input id="fileInput" accept="image/*, video/*" type="file" multiple name="images" />
+                            <p class="error-message images">Please select images</p>
+                        </div>
+                        <input type="reset" class="btn btn-default" placeholder="Cancel" />
+                        <input type="submit" class="btn btn-default" placeholder="Submit" />
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js">
+    var $ = require("jquery");
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11">
+    const Swal = require('sweetalert2')
+</script>
+
+<script type="text/javascript" src="/javascript/utils/validation.js"></script>
+<script type="text/javascript" src="/javascript/utils/browserStorage.js"></script>
+
+<script>
+
+    const resetForm = () => {
+        $("#eventForm")[0].reset()
+        $('.error-message').hide()
+    }
+
+    const submitForm = (event) => {
+        event.preventDefault()
+        $('.error-message').hide()
+        const values = $("#eventForm").serializeArray().reduce((acc, item) => ({ ...acc, [item.name]: item.value }), {})
+        const errors = checkValidation(values).filter(item => item !== "description")
+        const files = $('#fileInput')[0].files
+        if (!files.length) errors.push('images')
+        for (let name of errors) $(`.${name}`).show()
+        if (errors.length) return
+
+        const token = getItemLocalStorage('authToken')
+        const formData = new FormData()
+        formData.append('eventName', values.eventName)
+        formData.append('eventDate', values.eventDate)
+        formData.append('description', values.description)
+        formData.append('eventType', values.eventType)
+
+        for (let file of files) {
+            formData.append('images', file)
+        }
+
+        try {
+            $.ajax({
+                type: "post",
+                url: "/api/events",
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { "Authorization": `Bearer ${token}` },
+                success: (result, success, xhr) => {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Event created Successfully',
+                        icon: 'success',
+                    })
+                    resetForm()
+                },
+                error: (xhr, status, error) => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: `${xhr?.responseJSON?.error || "Went somthing wrong"}`,
+                        icon: 'error',
+                    })
+                    console.log(xhr?.responseJSON?.error)
+                }
+            })
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
+
+    // model events
+    $('#myModal').on('hide.bs.modal', resetForm)
+
+    // form events
+    $('#eventForm').on('reset', resetForm)
+    $('#eventForm').on('submit', submitForm)
+
+</script>
